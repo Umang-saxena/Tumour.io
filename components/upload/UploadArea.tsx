@@ -128,7 +128,7 @@ const UploadArea = ({ onFileUpload }: UploadAreaProps) => {
               <label htmlFor="file-upload">
                 <Button variant="hero" size="lg" className="cursor-pointer" asChild>
                   <span>
-                    <Image className="h-5 w-5" alt="Choose File"/>
+                    <Image className="h-5 w-5" />
                     Choose File
                   </span>
                 </Button>
