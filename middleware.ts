@@ -1,12 +1,25 @@
-import { clerkMiddleware } from '@clerk/nextjs/server'
+import { clerkMiddleware , createRouteMatcher, auth} from '@clerk/nextjs/server'
+import { NextResponse } from 'next/server';
 
-export default clerkMiddleware()
+const isPublicRoute = createRouteMatcher([
+  '/'
+]);
+export default clerkMiddleware(async (auth, request) => { 
+
+  if (isPublicRoute(request)) return;
+
+  const { userId } = await auth();
+  if( !userId) {
+     return NextResponse.redirect(new URL('/', request.url));
+  }
+
+  return 
+});
+
 
 export const config = {
   matcher: [
-    // Skip Next.js internals and all static files, unless found in search params
     '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
-    // Always run for API routes
     '/(api|trpc)(.*)',
   ],
-}
+};
