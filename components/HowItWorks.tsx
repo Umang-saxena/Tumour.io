@@ -53,9 +53,9 @@ const HowItWorks = () => {
                     </div>
                   </div>
                   
-                  <div className="mt-8 mb-6">
-                    <div className="w-16 h-16 bg-gradient-primary rounded-2xl flex items-center justify-center mx-auto group-hover:scale-110 transition-transform duration-300">
-                      <Icon className="h-8 w-8 text-primary-foreground" />
+                  <div className="mt-1 mb-4 flex items-center justify-center">
+                    <div className="w-24 h-30 bg-gradient-primary rounded-2xl flex items-center justify-center mx-auto group-hover:scale-110 transition-transform duration-300">
+                      <Icon className="h-12 w-12 text-primary-foreground" />
                     </div>
                   </div>
                   
