@@ -8,7 +8,7 @@ const mockHistory = [
         id: 1,
         filename: "patient_001_mri.jpg",
         uploadDate: "2024-08-15T10:30:00",
-        result: "Glioblastoma",
+        result: "Glioma",
         confidence: 94.5,
         status: "completed"
     },
@@ -32,7 +32,7 @@ const mockHistory = [
         id: 4,
         filename: "patient_scan_new.dcm",
         uploadDate: "2024-08-14T16:20:00",
-        result: "Pituitary Adenoma",
+        result: "Pituitary ",
         confidence: 89.1,
         status: "completed"
     },
@@ -60,7 +60,7 @@ const HistoryList = () => {
     return (
         <Card>
             <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
+                <CardTitle className="flex items-center space-x-2 w-full">
                     <Clock className="h-5 w-5 text-primary" />
                     <span>Recent Analysis History</span>
                 </CardTitle>
@@ -86,7 +86,7 @@ const HistoryList = () => {
                             </div>
                         </div>
 
-                        <div className="flex items-center space-x-3">
+                        <div className="flex items-center ">
                             <div className="text-right">
                                 <Badge variant={getResultColor(item.result) as any} className="mb-1">
                                     {item.result}

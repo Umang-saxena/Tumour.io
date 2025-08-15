@@ -85,7 +85,7 @@ const Upload = () => {
         <div className="min-h-screen bg-gradient-subtle">
             <Navigation />
 
-            <div className="container mx-auto px-4 py-8">
+            <div className="container mx-auto px-2 py-8">
                 <div className="mb-8">
                     <h1 className="text-3xl font-bold text-foreground mb-2">
                         MRI Brain Tumor Analysis
@@ -95,7 +95,7 @@ const Upload = () => {
                     </p>
                 </div>
 
-                <div className="grid lg:grid-cols-3 gap-8">
+                <div className="grid lg:grid-cols-3 gap-4">
                     {/* Upload and Analysis Section */}
                     <div className="lg:col-span-2 space-y-6">
                         <UploadArea onFileUpload={handleFileUpload} />
@@ -207,7 +207,7 @@ const Upload = () => {
                     </div>
 
                     {/* History Section */}
-                    <div className="lg:col-span-1">
+                    <div className="lg:col-span-1 w-[400px]">
                         <HistoryList />
                     </div>
                 </div>
