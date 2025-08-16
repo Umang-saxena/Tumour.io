@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Upload, Image, X, CheckCircle, User } from "lucide-react";
+import { Upload, Image as ImageIcon, X, CheckCircle, User } from "lucide-react";
 import { toast } from "sonner";
 
 interface UploadAreaProps {
@@ -25,7 +25,8 @@ const UploadArea = ({ onFileUpload }: UploadAreaProps) => {
     }
   }, []);
 
-  const handleDrop = useCallback((e: React.DragEvent) => {
+  const handleDrop = useCallback(
+  (e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
     setDragActive(false);
@@ -34,7 +35,10 @@ const UploadArea = ({ onFileUpload }: UploadAreaProps) => {
     if (files && files[0]) {
       handleFileSelection(files[0]);
     }
-  }, []);
+  },
+  [] // <-- include patientName so latest value is used
+);
+
 
   const handleFileSelection = (file: File) => {
     // Validate patient name first
@@ -169,7 +173,7 @@ const UploadArea = ({ onFileUpload }: UploadAreaProps) => {
                   disabled={!patientName.trim()}
                 >
                   <span>
-                    <Image className="h-5 w-5" />
+                    <ImageIcon className="h-5 w-5" />
                     Choose File
                   </span>
                 </Button>
