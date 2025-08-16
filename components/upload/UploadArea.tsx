@@ -1,16 +1,19 @@
 import { useState, useCallback } from "react";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Upload, Image, X, CheckCircle } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Upload, Image, X, CheckCircle, User } from "lucide-react";
 import { toast } from "sonner";
 
 interface UploadAreaProps {
-  onFileUpload: (file: File) => void;
+  onFileUpload: (file: File, patientName: string) => void;
 }
 
 const UploadArea = ({ onFileUpload }: UploadAreaProps) => {
   const [dragActive, setDragActive] = useState(false);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const [patientName, setPatientName] = useState("");
 
   const handleDrag = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -34,6 +37,14 @@ const UploadArea = ({ onFileUpload }: UploadAreaProps) => {
   }, []);
 
   const handleFileSelection = (file: File) => {
+    // Validate patient name first
+    if (!patientName.trim()) {
+      toast.error("Patient name required", {
+        description: "Please enter the patient's name before uploading a file.",
+      });
+      return;
+    }
+
     // Validate file type
     const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/dicom'];
     if (!validTypes.includes(file.type) && !file.name.toLowerCase().endsWith('.dcm')) {
@@ -52,7 +63,7 @@ const UploadArea = ({ onFileUpload }: UploadAreaProps) => {
     }
 
     setUploadedFile(file);
-    onFileUpload(file);
+    onFileUpload(file, patientName.trim());
      toast.success("File uploaded successfully", {
       description: (
         <span className="text-green-600 font-semibold">{file.name} is ready for analysis.</span>
@@ -69,11 +80,34 @@ const UploadArea = ({ onFileUpload }: UploadAreaProps) => {
 
   const removeFile = () => {
     setUploadedFile(null);
+    setPatientName("");
   };
 
   return (
     <Card className="border-2 border-dashed border-border hover:border-primary/50 transition-colors duration-300">
-      <CardContent className="p-8">
+      <CardHeader>
+        <CardTitle className="flex items-center space-x-2">
+          <User className="h-5 w-5 text-primary" />
+          <span>Patient Information & MRI Upload</span>
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-6">
+        {/* Patient Name Input */}
+        <div className="space-y-2">
+          <Label htmlFor="patient-name" className="text-sm font-medium text-foreground">
+            Patient Name *
+          </Label>
+          <Input
+            id="patient-name"
+            type="text"
+            placeholder="Enter patient's full name"
+            value={patientName}
+            onChange={(e) => setPatientName(e.target.value)}
+            className="w-full"
+            disabled={!!uploadedFile}
+          />
+        </div>
+
         {uploadedFile ? (
           <div className="text-center space-y-4">
             <div className="flex items-center justify-center w-16 h-16 bg-success/10 rounded-full mx-auto">
@@ -81,6 +115,7 @@ const UploadArea = ({ onFileUpload }: UploadAreaProps) => {
             </div>
             <div>
               <h3 className="text-lg font-semibold text-foreground mb-2">File Ready</h3>
+              <p className="text-muted-foreground font-medium">Patient: {patientName}</p>
               <p className="text-muted-foreground">{uploadedFile.name}</p>
               <p className="text-sm text-muted-foreground">
                 {(uploadedFile.size / 1024 / 1024).toFixed(2)} MB
@@ -126,13 +161,24 @@ const UploadArea = ({ onFileUpload }: UploadAreaProps) => {
                 onChange={handleFileInput}
               />
               <label htmlFor="file-upload">
-                <Button variant="hero" size="lg" className="cursor-pointer" asChild>
+                <Button 
+                  variant="hero" 
+                  size="lg" 
+                  className="cursor-pointer" 
+                  asChild
+                  disabled={!patientName.trim()}
+                >
                   <span>
                     <Image className="h-5 w-5" />
                     Choose File
                   </span>
                 </Button>
               </label>
+              {!patientName.trim() && (
+                <p className="text-sm text-muted-foreground">
+                  Please enter patient name first
+                </p>
+              )}
             </div>
           </div>
         )}

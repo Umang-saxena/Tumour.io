@@ -15,6 +15,10 @@ const resultSchema = new mongoose.Schema(
             type: String,
             required: true,
         },
+        analysisResult: {
+            type: mongoose.Schema.Types.Mixed,
+            required: false, // Optional field to store the complete analysis result
+        },
     },
     { timestamps: true }
 );

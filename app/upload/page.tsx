@@ -12,18 +12,20 @@ import { toast } from "sonner";
 
 const Upload = () => {
     const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+    const [patientName, setPatientName] = useState<string>("");
     const [isAnalyzing, setIsAnalyzing] = useState(false);
     const [analysisResult, setAnalysisResult] = useState<any>(null);
     const [progress, setProgress] = useState(0);
     // const { toast } = useToast();
 
-    const handleFileUpload = (file: File) => {
+    const handleFileUpload = (file: File, name: string) => {
         setUploadedFile(file);
+        setPatientName(name);
         setAnalysisResult(null);
     };
 
     const startAnalysis = async () => {
-        if (!uploadedFile) return;
+        if (!uploadedFile || !patientName) return;
 
         setIsAnalyzing(true);
         setProgress(0);
@@ -40,7 +42,7 @@ const Upload = () => {
         }, 200);
 
         // Simulate API call - in real app this would be actual backend call
-        setTimeout(() => {
+        setTimeout(async () => {
             clearInterval(interval);
             setProgress(100);
 
@@ -65,9 +67,45 @@ const Upload = () => {
             setIsAnalyzing(false);
             setProgress(0);
 
-            toast.success("Analysis Complete", {
-                description: "Your MRI scan has been successfully analyzed.",
-});
+            // Save result to database
+            try {
+                // Convert file to base64 for storage (in real app, you might upload to cloud storage)
+                const reader = new FileReader();
+                reader.onload = async () => {
+                    const base64Image = reader.result as string;
+                    
+                    const response = await fetch('/api/results', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            patientName,
+                            mriImage: base64Image,
+                            userId: 'user123', // In real app, get from auth context
+                            analysisResult: mockResult
+                        }),
+                    });
+
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        toast.success("Analysis Complete", {
+                            description: "Your MRI scan has been successfully analyzed and saved.",
+                        });
+                    } else {
+                        toast.error("Save Failed", {
+                            description: "Analysis completed but failed to save to database.",
+                        });
+                    }
+                };
+                reader.readAsDataURL(uploadedFile);
+            } catch (error) {
+                console.error('Error saving result:', error);
+                toast.error("Save Failed", {
+                    description: "Analysis completed but failed to save to database.",
+                });
+            }
 
         }, 3000);
     };
@@ -143,7 +181,7 @@ const Upload = () => {
                                     <CardTitle className="flex items-center justify-between">
                                         <div className="flex items-center space-x-2">
                                             <Brain className="h-5 w-5 text-primary" />
-                                            <span>Analysis Results</span>
+                                            <span>Analysis Results - {patientName}</span>
                                         </div>
                                         <div className="flex space-x-2">
                                             <Button variant="outline" size="sm">
