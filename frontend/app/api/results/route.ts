@@ -23,6 +23,7 @@ export async function POST(request: NextRequest) {
       mriImage,
       userId,
       analysisResult, // Store the complete analysis result
+      recommendation: analysisResult?.recommendation || null, // Optional field for recommendation
     });
 
     const savedResult = await newResult.save();
