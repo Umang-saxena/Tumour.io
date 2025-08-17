@@ -92,7 +92,7 @@ const Upload = () => {
             setProgress(0);
             toast.error('Analysis Failed', {
                 description: (
-                    <span className="text-green-600 font-semibold">An Error Occured while Analysis.</span>
+                    <span className="text-green-600 font-semibold">An Error {error.message} Occured while Analysis.</span>
                 )
             });
         }
