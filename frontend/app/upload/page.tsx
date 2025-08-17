@@ -47,7 +47,7 @@ const Upload = () => {
             formData.append('file', uploadedFile);
 
             // Change the URL below if your backend runs on a different port or domain
-            const response = await fetch('http://localhost:8000/predict', {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/predict`, {
                 method: 'POST',
                 body: formData,
             });
