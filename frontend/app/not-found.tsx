@@ -1,23 +1,13 @@
 "use client";
 
-import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import Link from "next/link";
 
 const NotFound = () => {
-    const [pathname, setPathname] = useState<string | null>(null);
-    const currentPathname = usePathname();
-
     useEffect(() => {
-        // Set pathname only on client side to avoid SSR issues
-        setPathname(currentPathname);
-    }, [currentPathname]);
-
-    useEffect(() => {
-        if (pathname) {
-            console.error("404 Error: User attempted to access non-existent route:", pathname);
-        }
-    }, [pathname]);
+        // Log 404 error on client side only
+        console.error("404 Error: User attempted to access non-existent route");
+    }, []);
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-100">
