@@ -30,7 +30,7 @@ const Upload = () => {
         setIsAnalyzing(true);
         setProgress(0);
 
-        // Simulate analysis progress
+        // Show progress bar animation
         const interval = setInterval(() => {
             setProgress(prev => {
                 if (prev >= 90) {
@@ -41,73 +41,61 @@ const Upload = () => {
             });
         }, 200);
 
-        // Simulate API call - in real app this would be actual backend call
-        setTimeout(async () => {
+        try {
+            // Send file to FastAPI backend
+            const formData = new FormData();
+            formData.append('file', uploadedFile);
+
+            // Change the URL below if your backend runs on a different port or domain
+            const response = await fetch('http://localhost:8000/predict', {
+                method: 'POST',
+                body: formData,
+            });
+
             clearInterval(interval);
             setProgress(100);
 
-            // Mock result
-            const mockResult = {
-                tumorType: "Glioblastoma",
-                confidence: 94.5,
-                riskLevel: "High",
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.detail || 'Prediction failed');
+            }
+
+            const result = await response.json();
+
+            // Map backend result to frontend format
+            const mappedResult = {
+                tumorType: result.prediction,
+                confidence: result.confidence,
+                riskLevel: result.prediction === 'glioma' || result.prediction === 'pituitary' ? 'High' : (result.prediction === 'meningioma' ? 'Medium' : 'Low'),
                 recommendations: [
-                    "Immediate consultation with neurosurgeon",
-                    "Additional contrast MRI recommended",
-                    "Genetic testing may be beneficial"
+                    result.prediction === 'notumor' ? 'No tumor detected. Routine follow-up recommended.' : 'Consult a neurospecialist for further evaluation.'
                 ],
                 technicalDetails: {
-                    modelVersion: "TumourNet v2.1",
-                    processingTime: "2.3 seconds",
-                    imageQuality: "Excellent"
-                }
+                    modelVersion: 'ResNet50V2',
+                    processingTime: 'N/A',
+                    imageQuality: 'N/A',
+                },
             };
 
-            setAnalysisResult(mockResult);
+            setAnalysisResult(mappedResult);
             setIsAnalyzing(false);
             setProgress(0);
 
-            // Save result to database
-            try {
-                // Convert file to base64 for storage (in real app, you might upload to cloud storage)
-                const reader = new FileReader();
-                reader.onload = async () => {
-                    const base64Image = reader.result as string;
-                    
-                    const response = await fetch('/api/results', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            patientName,
-                            mriImage: base64Image,
-                            userId: 'user123', // In real app, get from auth context
-                            analysisResult: mockResult
-                        }),
-                    });
-
-                    const data = await response.json();
-                    
-                    if (data.success) {
-                        toast.success("Analysis Complete", {
-                            description: "Your MRI scan has been successfully analyzed and saved.",
-                        });
-                    } else {
-                        toast.error("Save Failed", {
-                            description: "Analysis completed but failed to save to database.",
-                        });
-                    }
-                };
-                reader.readAsDataURL(uploadedFile);
-            } catch (error) {
-                console.error('Error saving result:', error);
-                toast.error("Save Failed", {
-                    description: "Analysis completed but failed to save to database.",
-                });
-            }
-
-        }, 3000);
+            toast.success('Analysis Complete', {
+                description:(
+                    <span className="text-green-600 font-semibold">`Prediction: ${result.prediction} (${result.confidence}%)`</span>
+                ) ,
+            });
+        } catch (error: any) {
+            clearInterval(interval);
+            setIsAnalyzing(false);
+            setProgress(0);
+            toast.error('Analysis Failed', {
+                description: (
+                    <span className="text-green-600 font-semibold">An Error Occured while Analysis.</span>
+                )
+            });
+        }
     };
 
     const getRiskColor = (risk: string) => {
