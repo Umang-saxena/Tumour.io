@@ -83,7 +83,7 @@ const Upload = () => {
 
             toast.success('Analysis Complete', {
                 description:(
-                    <span className="text-green-600 font-semibold">`Prediction: ${result.prediction} (${result.confidence}%)`</span>
+                    <span className="text-green-600 font-semibold">Prediction Completed Succesfully</span>
                 ) ,
             });
         } catch (error: any) {

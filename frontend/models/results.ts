@@ -19,6 +19,10 @@ const resultSchema = new mongoose.Schema(
             type: mongoose.Schema.Types.Mixed,
             required: false, // Optional field to store the complete analysis result
         },
+        recommendation: {
+            type: String,
+            required: false, // Optional field for recommendation based on analysis
+        },
     },
     { timestamps: true }
 );
