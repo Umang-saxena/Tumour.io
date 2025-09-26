@@ -1,21 +1,17 @@
 "use client";
 
 import Link from "next/link";
-// import { usePathname } from "next/navigation";
 import { Brain } from "lucide-react";
-
 import {
   SignInButton,
-  SignUpButton,
   SignedIn,
   SignedOut,
   UserButton,
-  useUser
-} from '@clerk/nextjs'
+  useUser,
+} from "@clerk/nextjs";
 
 const Navigation = () => {
-  // const pathname = usePathname();
-  const {user} = useUser();
+  const { user } = useUser();
 
   return (
     <nav className="bg-card/80 backdrop-blur-sm border-b border-border sticky top-0 z-50">
@@ -28,23 +24,25 @@ const Navigation = () => {
             </span>
           </Link>
 
-          <div className="flex items-center space-x-4">
-
-            {/* <Link href="/" passHref>
-              <Button
-                variant={pathname === "/" ? "default" : "ghost"}
-                size="sm"
-              >
-                Home
-              </Button>
-            </Link> */}
+          <div className="flex items-center space-x-4 text-white text-[16px] bg-blue-600 p-2 rounded-md hover:bg-blue-500 transition">
             <SignedOut>
-              <SignInButton /><p className="text-gray-500">or</p>
-              <SignUpButton />
+              <SignInButton
+                appearance={{
+                  elements: {
+                    rootBox:
+                      "inline-block rounded bg-blue-600 hover:bg-blue-700",
+                    button:
+                      "text-white font-semibold px-4 py-4 rounded shadow-md ",
+                  },
+                }}
+              >
+                Sign In / Sign Up
+              </SignInButton>
             </SignedOut>
+
             <SignedIn>
-              <div className="flex flex-row items-start space-x-2 text-md text-[18px] font-semibold text-blue-700 gap-y-3">
-                <div>Hello {user?.firstName} </div>
+              <div className="flex flex-row items-center space-x-2 text-md text-[18px] font-semibold text-blue-700">
+                <span>Hello {user?.firstName}</span>
                 <UserButton />
               </div>
             </SignedIn>

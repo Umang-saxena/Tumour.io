@@ -54,22 +54,24 @@ export default function AuthPage() {
 
         <div className="flex justify-center">
           {mode === 'signin' ? (
-            <SignIn 
+            <SignIn
               appearance={{
                 elements: {
                   rootBox: "mx-auto",
                   card: "shadow-lg"
                 }
               }}
+              redirectUrl="/upload"
             />
           ) : (
-            <SignUp 
+            <SignUp
               appearance={{
                 elements: {
                   rootBox: "mx-auto",
                   card: "shadow-lg"
                 }
               }}
+              redirectUrl="/upload"
             />
           )}
         </div>
