@@ -1,5 +1,4 @@
 from fastapi import APIRouter, File, UploadFile, HTTPException
-from tensorflow.keras.models import load_model
 from tensorflow.keras.utils import img_to_array
 from PIL import Image
 import numpy as np
@@ -7,12 +6,26 @@ import tensorflow as tf
 import os  # Add os import for path handling
 
 
+# Available backend options are: "jax", "torch", "tensorflow".
+os.environ["KERAS_BACKEND"] = "tensorflow"
+	
+
+from huggingface_hub import hf_hub_download
+import keras
+
+model_path = hf_hub_download(
+    repo_id="umangsaxena/brain-tumour-detection",
+    filename="brain_tumor_resnet50v2_model.keras"
+)
+model = keras.saving.load_model(model_path)
+
+
 # Initialize APIRouter
 router = APIRouter()
 
-# Load model once when app starts
-model_path = os.path.join(os.path.dirname(__file__), "../models/brain_tumor_resnet50v2_model.keras")
-model = load_model(model_path)
+# # Load model once when app starts
+# model_path = os.path.join(os.path.dirname(__file__), "../models/brain_tumor_resnet50v2_model.keras")
+# model = load_model(model_path)
 
 # Class names
 class_names = ["glioma", "meningioma", "notumor", "pituitary"]
