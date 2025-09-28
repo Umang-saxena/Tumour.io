@@ -8,32 +8,21 @@ const isPublicRoute = createRouteMatcher([
 ]);
 
 export default clerkMiddleware(async (auth, req) => {
-  // Check if it's a public route first to avoid unnecessary auth calls
-  if (isPublicRoute(req)) {
-    return NextResponse.next();
-  }
+  const { userId } = await auth();   // ✅ Await the promise
 
-  try {
-    const { userId } = await auth();
+  if (isPublicRoute(req)) return NextResponse.next();
 
-    if (!userId) {
-      return NextResponse.redirect(new URL("/auth", req.url));
-    }
-
-    return NextResponse.next();
-  } catch (error) {
-    // Handle auth errors gracefully
-    console.error("Auth error in middleware:", error);
+  if (!userId) {
     return NextResponse.redirect(new URL("/auth", req.url));
   }
+
+  return NextResponse.next();
 });
 
 export const config = {
   matcher: [
-    // Skip all internal paths (_next, static files)
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
-    // Always run for API routes
+    // Exclude static files/_next
+    "/((?!_next|.*\\..*).*)",
     "/(api|trpc)(.*)",
   ],
-  runtime: 'nodejs',
 };
